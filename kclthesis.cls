@@ -1,4 +1,4 @@
-\ProvidesClass{kclthesis}[2016/02/13 KCL MSc Thesis Class by Sebastian Zillessen and Andre Mueller]
+\ProvidesClass{kclthesis}[2016/02/13 KCL MSc Thesis]
 \NeedsTeXFormat{LaTeX2e}
 
 \newif\ifkclthesis@releaseproject
