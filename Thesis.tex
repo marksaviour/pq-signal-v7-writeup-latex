@@ -1,0 +1,117 @@
+\documentclass[oneside]{kclthesis}
+
+% ============================================================
+% Title-page metadata (consumed by kclthesis.cls)
+% ============================================================
+\modulecode{7CCSMPRJ}
+\submissiontitle{Individual Project Submission 2025/26}
+\author{Mark Saviour Farrugia}
+\studentnumber{K25128781}
+\programme{MSc in Cybersecurity}
+\title{Post-Quantum Signal -- Variant 7}
+\supervisor{Dr Benjamin Dowling}
+\wordcount{\red{XX,XXX}}
+\ReleaseProject{1}
+\department{Informatics}
+
+% ============================================================
+% Packages (hyperref, graphicx, fancyhdr, etc. come from the class)
+% ============================================================
+\usepackage[intoc]{nomencl}     % Nomenclature (listed in ToC)
+\makeindex                      % Index for nomencl; use \makenomenclature instead to auto-print it
+%\makenomenclature
+\usepackage[toc, acronym]{glossaries}  % Glossary and acronym support
+\usepackage{float}              % [H] float placement
+\usepackage[utf8]{inputenc}     % UTF-8 source encoding
+\usepackage{graphbox}           % align= key for \includegraphics (used by the class title page)
+
+\linespread{1}
+
+% ============================================================
+% Maths: blackboard-bold fam, theorem environments, shorthands
+% General-purpose toolkit inherited from the template; currently
+% unused in the chapters -- trim if the maths content stays light.
+% ============================================================
+\newfam\msbfam
+\def\Bbb#1{\fam\msbfam\relax#1}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{exa}{Example}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\newcommand{\ind}{1\hspace{-2.1mm}{1}}          % Indicator function
+\newcommand{\I}{\mathtt{i}}                      % Imaginary unit
+\newcommand{\D}{\mathrm{d}}                      % Differential d
+\newcommand{\E}{\mathrm{e}}                      % Euler's number
+\newcommand{\RR}{\mathbb{R}}                     % Real numbers
+\newcommand{\sgn}{\mathrm{sgn}}                  % Sign function
+\newcommand{\atanh}{\mathrm{arctanh}}            % Inverse hyperbolic tangent
+\def\equalDistrib{\,{\buildrel \Delta \over =}\,}% Equal in distribution
+\numberwithin{equation}{section}
+
+% Draft-highlight helpers
+\def\blue#1{\textcolor{blue}{#1}}
+\def\red#1{\textcolor{red}{#1}}
+
+% Number and list headings down to \subparagraph
+\setcounter{tocdepth}{5}
+\setcounter{secnumdepth}{5}
+
+
+\begin{document}
+\pagenumbering{Roman}
+
+% ---------- Title pages ----------
+\maketitle
+\maketitleTwo
+
+% ---------- Front matter ----------
+\include{contents/acknowledgements}
+\include{contents/abstract}
+\include{contents/nomenclature}
+
+% ---------- Table of contents ----------
+\setcounter{tocdepth}{4}
+\tableofcontents
+\newpage
+
+\include{contents/figures_tables} 
+
+% ---------- Page headers/footers ----------
+\fancyhead{}
+\fancyfoot{}
+\pagestyle{plain}
+\fancyhead[RO,LE]{\sffamily\small \thepage}
+\fancyhead[LO,RE]{\sffamily\small \nouppercase{\rightmark}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.0pt}
+
+% ---------- Main content ----------
+\pagenumbering{arabic}
+
+\include{contents/introduction}
+\include{contents/chapter2}
+\include{contents/chapter3} 
+\include{contents/chapter4}
+\include{contents/chapter5}
+\include{contents/chapter6}
+\include{contents/conclusion} 
+
+% ---------- References ----------
+\bibliographystyle{ieeetr}
+\bibliography{contents/references}
+
+% ---------- Appendix ----------
+\appendix
+\include{contents/app_1}
+
+\end{document}
