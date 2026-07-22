@@ -1,15 +1,62 @@
-\section{Detailed Protocol Diagrams}
+% ======================================================================
+% APPENDIX MATERIAL. This area is referenced from Section 3.5.3
+% Rough work currently. Will work on it later as not priority.
+% ======================================================================
 
-\red{[To be written.]}
+\section{Handshake Specification of the Source-Code Versions}
+\label{app:handshake-spec}
 
-\section{Source Code Listings}
+This appendix records the field-level specification of the handshake
+implemented by the two source-code versions, summarised in
+Section~\ref{subsubsec:variant-spec}. It is reference material: the
+design rationale, security requirements, and implementation status are
+stated in Sections~\ref{subsec:objectives}
+to~\ref{subsec:variant-design}.
 
-\red{[To be written.]}
+The responder holds four kinds of key material: a long-term ML-DSA-87
+identity pair; a medium-term X25519 ratchet pair; a signed last-resort
+KEM pair; and a replenished collection of signed one-time KEM pairs.
+The ratchet key does not enter the KEM-only bootstrap secret, but it
+seeds the Double Ratchet and contributes to the post-bootstrap message
+chain. The initiator holds its own long-term ML-DSA-87 identity pair
+and creates a fresh X25519 base key for each run, which identifies the
+session and is included in the signed transcript. Every public key
+begins with a one-byte algorithm identifier: \texttt{0x09} for the
+ML-DSA-87 identity keys, and, for the KEM keys, \texttt{0x0A}
+(ML-KEM-1024) in Version 1 and \texttt{0x0B} (HQC-256) in Version 2.
 
-\section{Raw Benchmark Data}
+The responder's published bundle contains its identity verification
+key, the ratchet public key and signature, the last-resort KEM public
+key and signature, an optional one-time KEM public key and signature,
+and the numeric identifiers of those signed keys; each signature
+covers the encoded key but not its numeric identifier or assigned
+bundle role. The initial message extends libsignal's
+\texttt{PreKeySignalMessage} with three fields: a one-time KEM pre-key
+identifier, a one-time KEM ciphertext, and the initiator's transcript
+signature. Existing fields carry the initiator's identity and base
+keys, the last-resort ciphertext and key identifiers, and the
+encrypted first message.
 
-\red{[To be written.]}
-
-\section{Reproduction Instructions}
-
-\red{[To be written.]}
+Encapsulation to the last-resort key yields \(ss_1\) and, when a
+one-time key is used, encapsulation to it yields \(ss_2\). The
+initiator forms the secret input
+\(\mathtt{0xFF}^{32} \parallel ss_1 \parallel ss_2\), omitting
+\(ss_2\) in last-resort-only mode; the leading constant preserves
+libsignal's discriminator convention. HKDF-SHA-256 derives 64 bytes of
+bootstrap root and chain material with no salt; the \texttt{info}
+value is \texttt{PQXDH\_MLKEM1024\_MLDSA87\_SHA-256} in Version 1 and
+\texttt{PQXDH\_HQC256\_MLDSA87\_SHA-256} in Version 2. The signed
+transcript is
+\[
+t = \mathrm{lp}(L_v) \parallel \mathrm{lp}(IK_A) \parallel
+\mathrm{lp}(ct_1) \parallel \mathrm{lp}(ct_2) \parallel
+\mathrm{lp}(IK_B) \parallel \mathrm{lp}(RK_B) \parallel
+\mathrm{lp}(BK_A),
+\]
+where \(\mathrm{lp}(\cdot)\) prefixes each value with its four-byte
+big-endian length; \(L_v\) is
+\texttt{PQXDH\_MLKEM1024\_MLDSA87\_transcript} or
+\texttt{PQXDH\_HQC256\_MLDSA87\_transcript}; \(ct_2\) is the empty
+string in last-resort-only mode; \(RK_B\) is the responder's ratchet
+public key; and \(BK_A\) is the initiator's base key. Every ML-DSA-87
+operation uses the context string \texttt{Signal\_PQXDH\_MLDSA87}.
