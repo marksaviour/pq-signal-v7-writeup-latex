@@ -1,15 +1,16 @@
-%NOTE: Still Rough work; need to fix citation links, but still figuring out Overleaf.
-
+%Chapter 2
 \section{Background and Literature Survey}
 \label{sec:lit}
 
 This chapter builds the background a reader needs to follow the work, from the fundamentals of secure messaging through the Signal Protocol, its X3DH key agreement, and the classical primitives underlying it, to the quantum threat that motivates change and the post-quantum primitives that address it. Alongside this background, the chapter surveys the literature: the PQXDH protocol and its formal analyses, the candidate primitives that could replace Signal's current choices, and the post-quantum migrations already underway in other deployed protocols. It closes by identifying the gap in the literature which this dissertation addresses.
 
+%Chapter 2.1
 \subsection{Background}
 \label{subsec:background}
 
 The analysis in this chapter's survey depends on a shared foundation: the cryptographic primitives Signal builds from, the two key agreement protocols at the centre of this project, the quantum threat that separates them, and the security properties against which every design choice is ultimately judged. This section establishes that foundation compactly, so that the survey which follows can compare and analyse the literature without pausing to teach.
 
+%Chapter 2.1.1
 \subsubsection{Cryptographic Primitives and Notation}
 \label{subsubsec:primitives}
 
@@ -21,6 +22,7 @@ A key derivation function (KDF) deterministically expands one or more input secr
 
 Signal's constructions compose AES with established authenticated modes, namely AES-256-CBC with HMAC-SHA-256 and AES-256-GCM \cite{rogaway2002aead}. These symmetric primitives derive their security from the underlying hash function and block cipher rather than from any number-theoretic problem, a distinction whose significance appears in Section~\ref{subsubsec:quantum-threat}.
 
+%Chapter 2.1.2
 \subsubsection{The X3DH Key Agreement Protocol}
 \label{subsubsec:x3dh}
 
@@ -41,6 +43,7 @@ The four-DH structure underpins X3DH's security properties. The inclusion of $IK
 
 The output of X3DH is handed to the Double Ratchet, Signal's continuous message-encryption protocol that evolves session keys with every message exchanged, which uses $SK$ as its initial root key \cite{perrin2016doubleratchet}. The protocol's security, including its forward-secrecy guarantees, was formally established in the multi-stage authenticated key exchange model of \cite{cohngordon2020formal}. A step-by-step pseudocode rendering is given in Appendix~A.1.
 
+%Chapter 2.1.3
 \subsubsection{The Quantum Threat to Classical Cryptography}
 \label{subsubsec:quantum-threat}
 
@@ -50,6 +53,7 @@ Symmetric cryptography fares far better. Grover's algorithm speeds up unstructur
 
 The threat is present rather than future because of the harvest-now-decrypt-later (HNDL) model: an adversary records encrypted traffic today and stores it until a capable quantum computer exists, then decrypts it \cite{mosca2018cybersecurity}. HNDL threatens confidentiality but not authentication, since a signature cannot be retroactively forged on a past exchange; the danger is therefore concentrated on key agreement, whose job is to protect confidentiality over time. Any message whose secrecy must outlive the arrival of such a machine is effectively exposed at the moment it is sent.
 
+%Chapter 2.1.4
 \subsubsection{Post-Quantum Cryptography and Its Families}
 \label{subsubsec:pqc-families}
 
@@ -57,6 +61,7 @@ Post-quantum cryptography comprises public-key schemes whose security rests on m
 
 Code-based schemes rest on the difficulty of decoding random linear error-correcting codes; the family dates to 1978 and includes Classic McEliece, the oldest candidate, alongside the more compact HQC and BIKE. Hash-based schemes rest only on the security of an underlying hash function, the most conservative assumption available, but produce only signatures, of which SLH-DSA is the standardised example. Multivariate and isogeny-based schemes complete the landscape but have fared poorly under cryptanalysis, with leading candidates in both families broken during the standardisation era, and none standardised. NIST's post-quantum standardisation process, begun in 2016, produced its first standards in August 2024 and selected the code-based HQC in 2025 as a deliberate hedge against progress on lattice problems \cite{alagic2025ir8545}. NIST classifies post-quantum parameter sets into five security levels defined by equivalence to attacks on established symmetric primitives: levels 1, 3, and 5 correspond to the difficulty of exhaustive key search on AES-128, AES-192, and AES-256, respectively, while levels 2 and 4 correspond to collision search on SHA-256 and SHA-384 \cite{alagic2025ir8545}. These levels are the standard yardstick by which parameter sets of different schemes are compared throughout the survey.
 
+%Chapter 2.1.5
 \subsubsection{The PQXDH Protocol}
 \label{subsubsec:pqxdh}
 
@@ -66,6 +71,7 @@ Each pre-key bundle is extended with one or more post-quantum pre-keys ($PQPK$),
 
 The construction is hybrid: the final secret depends on both the elliptic-curve component and the post-quantum component, so an adversary must defeat both the discrete logarithm problem on Curve25519 and the underlying problem of the KEM to recover $SK$ \cite{kret2024pqxdh}. Signal motivates the hybrid choice as a conservative defence against cryptanalytic progress on either primitive in isolation \cite{kret2023quantum}. The output of PQXDH is handed to the Double Ratchet exactly as X3DH's output was, requiring no change to the ratcheting layer. A step-by-step pseudocode rendering is given in Appendix~A.2.
 
+%Chapter 2.1.6
 \subsubsection{Security Properties of Secure Messaging}
 \label{subsubsec:security-properties}
 
@@ -75,21 +81,23 @@ Forward secrecy (FS) requires that compromise of long-term key material at time 
 
 Cryptographic deniability requires that a session transcript does not, to a third party, constitute proof that a sender authored its messages \cite{marlinspike2016x3dh}. X3DH provides it because authentication is achieved through Diffie-Hellman operations rather than signatures over message content; either participant could have produced an indistinguishable transcript alone. The implications of this post-quantum transition for deniability are an active question and are discussed in the survey. Finally, post-quantum forward secrecy is forward secrecy evaluated against an adversary with a cryptographically relevant quantum computer, including a harvest-now-decrypt-later adversary; it is the property that PQXDH is designed principally to provide \cite{kret2024pqxdh, bhargavan2024formal}.
 
+%Chapter 2.2
 \subsection{Literature Survey}
 \label{subsec:literature-survey}
 
-The background establishes what PQXDH is and what any substituted primitives must provide. This survey will now turn to the literature itself: what it establishes about the urgency of migration to post-quantum security; how the candidate post-quantum primitives compare on the metrics required by Signal's deployment; how PQXDH and comparable protocols have converged on the same choices; and where the published records fall short. Rather than summarising sources one at a time, the survey compares related sources to draw out findings that no single source states on its own. Each subsection concludes with an explanation of what those findings mean for this project's design choices.
+The background establishes what PQXDH is and what any substituted primitives must provide. This survey now turns to the literature itself: what it establishes about the urgency of migration to post-quantum security; how the candidate post-quantum primitives compare on the metrics required by Signal's deployment; how PQXDH and comparable protocols have converged on the same choices; and where the published records fall short. Rather than summarising sources one at a time, the survey compares related sources to draw out findings that no single source states on its own. Each subsection concludes with an explanation of what those findings mean for this project's design choices.
 
+%Chapter 2.2.1
 \subsubsection{Candidate Post-Quantum Primitives on Signal-Relevant Metrics}
 \label{subsubsec:lit-primitives}
 
 Signal's deployment context determines three practical measures by which candidate primitives must be compared: the amount of data transmitted per handshake, the server-side storage consumed by each user's pre-key bundle, and the computational cost of each cryptographic operation. The first two follow from the protocol's structure, since every session initiation fetches a pre-key bundle containing public keys and signatures, and the third follows from Signal's largely mobile user base. Because the deployed PQXDH uses ML-KEM-1024 at NIST security level 5 \cite{kret2024pqxdh}, all candidates are compared at level 5. The literature provides three kinds of evidence for this comparison: the specification documents fix the exact sizes of keys, ciphertexts, and signatures; the NIST status reports record comparative security judgements \cite{alagic2025ir8545}; and the open benchmarking projects measure operation speeds across platforms \cite{oqs2025benchmarking, ebacs}. NIST's evaluations assess each scheme for general-purpose use, and this survey cites them as documented evidence of security records and maturity, together with the reasons behind each judgement, rather than as verdicts to be inherited. They do not assess any scheme specifically against Signal's deployment; that question is the one this dissertation measures.
 
-Among the KEMs, ML-KEM-1024 is the primitive currently deployed in PQXDH and provides the baseline. Its public key is 1568 bytes, its ciphertext is 1568 bytes \cite{nist2024fips203}, and its key generation, encapsulation, and decapsulation each complete within microseconds on commodity hardware \cite{oqs2025benchmarking}. HQC was selected by NIST in 2025 as a code-based backup to ML-KEM, on the grounds that a second KEM resting on a different mathematical problem protects against future cryptanalytic progress on lattices \cite{alagic2025ir8545}. That protection has a measurable cost. At level 5, HQC's public key is approximately 7.2\,KB and its ciphertext is approximately 14.5\,KB \cite{aguilarmelchor2025hqc}; taken together, an HQC handshake transmits roughly seven times as much KEM material as an ML-KEM handshake, and every pre-key bundle stored on the server grows by the same public-key difference. HQC's decapsulation is also measurably slower than ML-KEM's \cite{oqs2025benchmarking}. No published study reports whether these costs are acceptable in an asynchronous messaging deployment; producing that evidence is one of the objectives of this dissertation.
+Among the KEMs, ML-KEM-1024 is the primitive named for PQXDH's post-quantum component in current libsignal releases; the pinned baseline of this project uses the Kyber-1024 parameter set, which has identical key and ciphertext sizes (Chapter 3). Its public key is 1568 bytes, its ciphertext is 1568 bytes \cite{nist2024fips203}, and its key generation, encapsulation, and decapsulation each complete within microseconds on commodity hardware \cite{oqs2025benchmarking}. HQC was selected by NIST in 2025 as a code-based backup to ML-KEM, on the grounds that a second KEM resting on a different mathematical problem protects against future cryptanalytic progress on lattices \cite{alagic2025ir8545}. That protection has a measurable cost. At level 5, HQC's public key is approximately 7.2\,KB and its ciphertext is approximately 14.5\,KB \cite{aguilarmelchor2025hqc}; taken together, an HQC handshake transmits roughly seven times as much KEM material as an ML-KEM handshake, and every pre-key bundle stored on the server grows by the same public-key difference. HQC's decapsulation is also measurably slower than ML-KEM's \cite{oqs2025benchmarking}. No published study reports whether these costs are acceptable in an asynchronous messaging deployment; producing that evidence is one of the objectives of this dissertation.
 
 The remaining candidates can be excluded on the published evidence. BIKE has smaller keys than HQC \cite{aragon2022bike}, but NIST passed it over because its security analysis was judged less mature \cite{alagic2025ir8545}; in NIST's assessment, confidence in a scheme's security mattered more than its key sizes, and the selection criteria of this project take the same view. FrodoKEM is a deliberately conservative lattice KEM that avoids the structured assumptions of ML-KEM, but its level-5 public keys are approximately 21.5\,KB \cite{alkim2016frodo}, so it costs about as much bandwidth as HQC while remaining in the same mathematical family as ML-KEM; a project seeking assumption diversity gains more from HQC at a similar price. Classic McEliece has the longest security record of any post-quantum candidate, and its ciphertexts are under 200 bytes, but its public keys are approximately one megabyte \cite{bernstein2022mceliece}. PQXDH requires the initiator to download the public key from the pre-key bundle at every session start, so a megabyte-sized key is impractical, and NIST cited this explicitly when declining to standardise the scheme \cite{alagic2025ir8545}.
 
-On this evidence, ML-KEM-1024 and HQC are the two KEMs whose direct comparison answers the question the literature leaves open: ML-KEM-1024 because it is what Signal deploys, and HQC because it is the standardised alternative built on a different mathematical problem. The final selection is made in Chapter~3, where both candidates are assessed against the full selection criteria for this project. Standardisation status matters here for practical reasons rather than as an appeal to authority: standards-track schemes have mature, well-tested implementations, so benchmark results reflect the algorithm rather than the implementation, and any recommendation drawn from the results concerns primitives that Signal could realistically adopt.
+On this evidence, ML-KEM-1024 and HQC are the two KEMs whose direct comparison answers the question the literature leaves open: ML-KEM-1024 because it is what Signal deploys, and HQC because it is the alternative selected for standardisation, built on a different mathematical problem. The final selection is made in Chapter~3, where both candidates are assessed against the full selection criteria for this project. Standardisation status matters here for practical reasons rather than as an appeal to authority: standards-track schemes generally have mature, well-tested implementations, and where that holds, benchmark results reflect the algorithm rather than the implementation. Chapter 3 records that it holds for ML-KEM-1024 but not yet for HQC, whose timings are therefore read as properties of the pinned implementation. Any recommendation drawn from the results concerns primitives that Signal could realistically adopt.
 
 A fully post-quantum variant must also replace the signature scheme used to sign pre-keys. The classical scheme XEdDSA produces 64-byte signatures for 32-byte public keys \cite{perrin2016xeddsa}. ML-DSA-87, the level-5 parameter set of the primary standardised post-quantum signature, produces 4627-byte signatures under 2592-byte public keys \cite{nist2024fips204}, roughly seventy times larger than XEdDSA's. Each PQXDH bundle carries two such signatures, one over the signed pre-key and one over the post-quantum pre-key \cite{kret2024pqxdh}, so the growth applies twice per bundle, and the specification figures suggest that the signature may contribute as much to bundle growth as the KEM itself. The benchmarks in Chapter~5 measure that contribution. ML-DSA's signing and verification are fast across platforms \cite{oqs2025benchmarking}, so its cost lies in size rather than computation.
 
@@ -97,6 +105,7 @@ Two standardised alternatives to ML-DSA exist, and both can be excluded on curre
 
 On this evidence, ML-DSA-87 is the only level-5 post-quantum signature that is standardised, acceptably sized, and mature in its implementations; as with the KEMs, the formal selection is made in Chapter~3. One further observation closes the comparison. The sizes above are taken from specifications, and the speeds are from benchmarks that measure each primitive in isolation \cite{oqs2025benchmarking, ebacs}. No published study measures these primitives inside PQXDH's handshake and pre-key bundle model. That absence is developed into the research gap at the end of this survey.
 
+%Chapter 2.2.2
 \subsubsection{The Urgency of Post-Quantum Migration}
 \label{subsubsec:lit-urgency}
 
@@ -106,6 +115,7 @@ The third duration is the uncertain one, and the resource-estimation literature 
 
 For Signal, the other two durations are both long. Private conversations can remain sensitive for decades, and Signal's own migration has already taken years: PQXDH was deployed in 2023 \cite{kret2023quantum}, post-quantum protection reached the ratcheting layer only in 2025 \cite{connell2025spqr}, and the pre-key signatures remain classical. With confidentiality lifetimes measured in decades and migration measured in years, the comparison holds under any plausible estimate of the time remaining, so the literature supports migrating now rather than when a machine is announced. The open question is therefore not whether to migrate but which primitives to migrate to, and that is the question the next subsection takes up.
 
+%Chapter 2.2.3
 \subsubsection{Primitive Choices in Deployed Protocols and the Formal Analysis of PQXDH}
 \label{subsubsec:lit-protocols}
 
@@ -113,7 +123,7 @@ PQXDH is neither the only protocol to have chosen post-quantum primitives nor an
 
 The most thorough public analysis of PQXDH is by Bhargavan, Jacomme, Kiefer, and Schmidt, who modelled the protocol in both the symbolic prover ProVerif and the computational prover CryptoVerif \cite{bhargavan2024formal}. Their analysis confirmed that PQXDH preserves the authentication and forward-secrecy guarantees of X3DH and adds post-quantum forward secrecy against a harvest-now-decrypt-later adversary. It also identified imprecisions in the original specification, notably a possible encoding confusion between Diffie-Hellman and KEM public keys and the absence of an explicit security assumption for the AEAD scheme, which were corrected in a revision developed jointly with Signal's designers \cite{bhargavan2023cryspen}. The finding that matters most for this project is a requirement the analysis placed on the KEM itself: PQXDH relies on the post-quantum shared secret being bound to the KEM public key. ML-KEM satisfies this property, but it is not a consequence of IND-CCA security, so it cannot be assumed of an arbitrary replacement KEM.
 
-Subsequent work has made this requirement precise. Cremers, Dax, and Medinger formalised a hierarchy of binding properties for KEMs, identified the class of re-encapsulation attacks that arise when binding fails, and built a Tamarin library that derives the minimal binding a given protocol requires \cite{cremers2024kems}. Further work analyses the binding achieved by implicitly rejecting KEMs built from the Fujisaki-Okamoto transform, treating BIKE and HQC directly \cite{binding2025bikehqc}. The consequence for this project is direct: substituting HQC into PQXDH is not a drop-in replacement, and the check of HQC's binding, together with any wrapping construction it requires, is carried out in Chapter~3.
+Subsequent work has made this requirement precise. Cremers, Dax, and Medinger formalised a hierarchy of binding properties for KEMs, identified the class of re-encapsulation attacks that arise when binding fails, and built a Tamarin library that derives the minimal binding a given protocol requires \cite{cremers2024kems}. Further work analyses the binding achieved by implicitly rejecting KEMs built from the Fujisaki--Okamoto transform, treating BIKE and HQC directly \cite{binding2025bikehqc}. The consequence for this project is direct: substituting HQC into PQXDH is not a drop-in replacement, and the check of HQC's binding, together with any wrapping construction it requires, is carried out in Chapter~3.
 
 The deployed protocols show how the same choices were made elsewhere, and their records are public in a way that Signal's comparative reasoning is not. In TLS 1.3, the IETF working group produced a framework for hybrid key exchange \cite{stebila2025hybridtls}, defined the specific hybrid groups now in use \cite{kwiatkowski2026ecdhemlkem}, and progressed a parallel specification for pure ML-KEM key exchange \cite{connolly2026mlkemtls}; the hybrid group X25519MLKEM768 is deployed in production browsers and platforms, including as a default in OpenJDK \cite{oracle2025jep527}. In SSH, OpenSSH has shipped a hybrid post-quantum key exchange as its default since version 9.0 in April 2022, initially using Streamlined NTRU Prime, a scheme NIST did not select for standardisation, and moved its default to an ML-KEM hybrid in version 10.0 in April 2025 \cite{openssh2026pq}. Two lessons follow. First, deployed protocols exercise their own engineering judgement rather than waiting on standardisation: SSH ran a non-standardised KEM as its default for three years. Second, in both protocols, the migration covers only key agreement, while authentication remains classical, mirroring Signal's own position, since PQXDH's pre-key signatures are still XEdDSA.
 
@@ -123,6 +133,7 @@ Research published in 2025 explores exactly that next step. Dodis, Jost, Katsuma
 
 Taken together, the record establishes three things. Any KEM substituted into PQXDH carries a binding obligation that must be checked, and for HQC, the material against which to check it is published. Every production deployment is currently hybrid, with pure post-quantum specifications prepared but not yet adopted, and the engineering reasoning behind those deployments is public, whereas Signal's is not. And the design space of fully post-quantum Signal handshakes is under active formal study. What none of this work provides is empirical measurement: no published study implements alternative primitive instantiations of PQXDH and measures them on Signal-relevant metrics. That absence is the subject of the next subsection.
 
+%Chapter 2.2.4
 \subsubsection{Summary and Research Gap}
 \label{subsubsec:lit-gap}
 
