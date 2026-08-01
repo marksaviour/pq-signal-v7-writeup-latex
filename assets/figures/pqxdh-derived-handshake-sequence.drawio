@@ -1,0 +1,73 @@
+<mxfile host="app.diagrams.net" agent="Claude">
+  <diagram id="sec-3-5-3-handshake" name="Section 3.5.3">
+    <mxGraphModel dx="1318" dy="1108" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ako8ENr3sAKaGVFih7be-1" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="720" width="890" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-init" parent="ako8ENr3sAKaGVFih7be-1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;size=40;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;" value="Initiator" vertex="1">
+          <mxGeometry height="720" width="200" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-srv" parent="ako8ENr3sAKaGVFih7be-1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;size=40;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;fontStyle=1;" value="Server" vertex="1">
+          <mxGeometry height="720" width="200" x="320" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-resp" parent="ako8ENr3sAKaGVFih7be-1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;size=40;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1;" value="Responder" vertex="1">
+          <mxGeometry height="720" width="200" x="640" as="geometry" />
+        </mxCell>
+        <mxCell id="msg1" edge="1" parent="ako8ENr3sAKaGVFih7be-1" source="act-r1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="act-s1" value="1. Publish signed pre-key bundle">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="msg2" edge="1" parent="ako8ENr3sAKaGVFih7be-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" value="2. Return bundle">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="413.98" y="220" as="sourcePoint" />
+            <mxPoint x="106.00999999999999" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="self3" edge="1" parent="ako8ENr3sAKaGVFih7be-1" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=middle;spacingLeft=6;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=1;exitY=0.3182;exitDx=0;exitDy=0;innerLoopWaypoints=1;" value="3. Verify signatures,&lt;br&gt;encapsulate, run HKDF,&lt;br&gt;sign transcript">
+          <mxGeometry relative="1" x="0.0336" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="106" y="320" />
+              <mxPoint x="239.03" y="320" />
+              <mxPoint x="239.03" y="360.9" />
+            </Array>
+            <mxPoint x="106.02000000000005" y="309.9960000000002" as="sourcePoint" />
+            <mxPoint x="106.02000000000005" y="360.9140845070423" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg4" edge="1" parent="ako8ENr3sAKaGVFih7be-1" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;" value="4. Send ciphertexts, signature,&lt;br&gt;initial message">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="106.01000000000005" y="460" as="sourcePoint" />
+            <mxPoint x="733.98" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="self5" edge="1" parent="ako8ENr3sAKaGVFih7be-1" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=middle;spacingLeft=6;endArrow=block;curved=0;rounded=0;fontSize=12;labelBackgroundColor=#ffffff;exitX=1;exitY=0.4667;exitDx=0;exitDy=0;" value="5. Decapsulate, run HKDF,&lt;br&gt;verify signature,&lt;br&gt;accept / reject">
+          <mxGeometry relative="1" x="0.0906" y="-1" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="746" y="519.7" />
+              <mxPoint x="879" y="519.7" />
+              <mxPoint x="879" y="560" />
+            </Array>
+            <mxPoint x="746.01" y="487.34000000000003" as="sourcePoint" />
+            <mxPoint x="746.01" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act-r1" parent="ako8ENr3sAKaGVFih7be-1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;fillColor=#ffffff;strokeColor=#6c8ebf;" value="" vertex="1">
+          <mxGeometry height="40" width="12.03" x="733.98" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="act-s1" parent="ako8ENr3sAKaGVFih7be-1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;fillColor=#ffffff;strokeColor=#666666;" value="" vertex="1">
+          <mxGeometry height="120" width="12.03" x="413.98" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="act-i1" parent="ako8ENr3sAKaGVFih7be-1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;fillColor=#ffffff;strokeColor=#6c8ebf;" value="" vertex="1">
+          <mxGeometry height="280" width="12.03" x="93.98" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="act-r2" parent="ako8ENr3sAKaGVFih7be-1" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;fillColor=#ffffff;strokeColor=#6c8ebf;" value="" vertex="1">
+          <mxGeometry height="200" width="12.03" x="733.98" y="440" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

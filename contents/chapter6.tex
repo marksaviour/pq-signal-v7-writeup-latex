@@ -1,24 +1,29 @@
 %Chapter 6
 \section{Legal, Social, Ethical and Professional Issues}
 \label{sec:lsepi}
-\red{[To be written.]}
+
+This chapter examines the legal, social, ethical, and professional dimensions of the work. The project produces a cryptographic research prototype derived from a widely deployed messaging library, and both its subject matter, the confidentiality of private communication, and its method, modification and release of security-sensitive code, raise considerations that a purely technical account would leave unstated. Each of the four dimensions is treated in turn.
 
 %Chapter 6.1
 \subsection{Legal Issues}
 \label{subsec:lsepi-legal}
-\red{[To be written.]}
+
+The principal legal consideration is licensing. The work is a derivative of libsignal, which is distributed under the GNU Affero General Public License version~3, and the fork therefore inherits that licence and its obligations, including the requirement that modified sources be made available to users of a networked service built from them. The project honours this by releasing its complete modified source publicly under the same licence. A second consideration arises from the vendored HQC-256 dependency, which is distributed under a permissive licence but was incorporated without its accompanying licence text; this omission is identified in the project record and is a compliance defect to be corrected before any wider distribution, not a licensing conflict, since the permissive terms are compatible with the project's own. The work involves cryptographic software whose export is regulated in several jurisdictions, but it uses only published, standardised, or openly submitted algorithms and publishes its source openly, which places it within the well-established treatment of open-source cryptographic research rather than in any controlled category. No user data of any kind is collected, processed, or stored by the project, so data-protection law does not bear on it.
 
 %Chapter 6.2
 \subsection{Social Issues}
 \label{subsec:lsepi-social}
-\red{[To be written.]}
+
+Secure messaging is socially consequential because it protects the private communication of individuals, including those, such as journalists, activists, and people at risk, for whom confidentiality can be a matter of safety. The migration to post-quantum cryptography that motivates this work is itself a social good: an adversary able to record encrypted traffic today and decrypt it once a quantum computer exists threatens the long-term confidentiality of communication that is private now, and strengthening the handshake against that threat protects it. The project's contribution to this is modest and indirect, since it produces an experimental prototype rather than a deployable improvement, but its direction is aligned with the public interest in durable communications privacy. The same properties that make secure messaging valuable also make it usable by those who would do harm, a tension inherent to all strong cryptography; the settled position, which this project adopts, is that the protection of the many who rely on private communication outweighs its misuse by the few, and that weakening cryptography to prevent the latter would principally harm the former.
 
 %Chapter 6.3
 \subsection{Ethical Issues}
 \label{subsec:lsepi-ethical}
-\red{[To be written.]}
+
+The foremost ethical obligation in security research is to avoid creating a false impression of safety, because a cryptographic system believed secure but in fact flawed is more dangerous than one known to be experimental. This obligation shaped the reporting of the work. The prototype's limitations are stated plainly and collected in a single requirement-to-evidence matrix rather than dispersed or understated: the handshake establishes a post-quantum shared secret and authenticates its transcript, but ciphertext binding is signature-mediated rather than bound into the key derivation, suite enforcement is absent at the constructors, and the binding property PQXDH requires is not established for the pinned HQC revision. The work makes no claim of deployment readiness or of formal security, and it is careful to describe itself as an experimental prototype rather than a fully post-quantum messaging system, since only the handshake, and not the session that follows it, is post-quantum. The project involved no human participants and no personal data, so no research-ethics approval was required, and the only ethical questions it raises are those of honest representation, which the reporting rule adopted throughout is designed to answer.
 
 %Chapter 6.4
 \subsection{Professional Issues}
 \label{subsec:lsepi-professional}
-\red{[To be written.]}
+
+The work was conducted in line with the professional standards expected of computing practitioners, including those set out in the British Computer Society's Code of Conduct, in particular the duties to maintain competence, to have regard to the legitimate interests of third parties, and to represent work honestly. Competence was pursued by grounding the primitive selection in the published formal analysis of PQXDH rather than in intuition, and by pinning every dependency, toolchain, and measurement input so that the results are reproducible and independently checkable. The legitimate interests of third parties were respected by honouring the upstream licence, by not misrepresenting the modified fork as an official Signal product, and by identifying the inherited documentation and licensing defects in the project record rather than concealing them. Honest representation was maintained throughout the reporting, as described above. Where automated tools were used in the course of the work, including in the execution of the benchmark campaign, their use is recorded in the project's own materials, and the dissertation's account of its methods is consistent with that record, in keeping with the institution's requirements on the declaration of tool use.
