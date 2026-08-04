@@ -12,7 +12,7 @@
 
 \ProcessOptions*
 
-\LoadClass[11pt,a4paper]{article}
+\LoadClass[12pt,a4paper]{article}
 
 % Mathfonts
 \RequirePackage{amsmath, amsfonts, amsthm, amssymb}
@@ -29,7 +29,7 @@
 
 % Cover Page
 \RequirePackage{graphicx}
-\RequirePackage[paper=a4paper]{geometry}
+\RequirePackage[a4paper,margin=1.5cm]{geometry}
 \RequirePackage{setspace}
 \RequirePackage{framed}
 
@@ -83,7 +83,7 @@
 \end{minipage}
 \vspace{1cm}
 
-\doublespacing{
+\singlespacing{
     \begin{minipage}{1\textwidth}
     		\begin{center}
     			\textbf{\@modulecode \\ \@submissiontitle}
@@ -204,5 +204,5 @@ This dissertation is submitted for the degree of \@programme.\\
 \end{titlepage}
 }
 
-\onehalfspacing
+\singlespacing
 \endinput
