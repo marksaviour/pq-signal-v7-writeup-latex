@@ -37,7 +37,7 @@ The security claims in this subsection are limited to the PQXDH-derived KEM boot
 
 Given the threat model of Section~\ref{subsec:threat-model} and an authenticated binding between each user and their ML-DSA-87 identity verification key, each artefact version must achieve mutual authentication against an active quantum-capable adversary: the responder through signatures on published pre-keys, the initiator through a signature on the handshake transcript. This is a stronger objective than deployed PQXDH's, whose Diffie--Hellman-based authentication does not resist active quantum adversaries, so it requires a separate argument rather than relying on PQXDH's existing analysis.
 
-A completed handshake must remain confidential against a quantum-capable adversary unless the post-quantum decapsulation material for that session is compromised. Neither artefact version incorporates an X25519 agreement value into the handshake secret, so both lack the hybrid fallback of deployed PQXDH if the selected KEM is subsequently broken: confidentiality of the bootstrap secret rests solely on the selected KEM, and authentication on ML-DSA-87, under the stated assumptions about the KDF, randomness, transcript processing, and key erasure.
+A completed handshake must remain confidential against a quantum-capable adversary unless that session's decapsulation material is compromised. Neither version mixes an X25519 value into the handshake secret, so both lack deployed PQXDH's hybrid fallback if the KEM is later broken: confidentiality rests solely on the selected KEM and authentication on ML-DSA-87.
 
 Forward secrecy is mode-dependent. Last-resort-only runs remain exposed to later compromise of the retained decapsulation key. In last-resort-plus-one-time mode, later compromise of the retained key alone must not reveal the run, provided that the additional key is authenticated as one-time and its private key and transient secret are erased after successful use. Later identity-signing-key compromise alone must not reveal an earlier handshake secret, although it may enable later impersonation. Appendix~\ref{app:extended-requirements} gives the full conditions.
 
@@ -49,7 +49,7 @@ The primitive constraints, IND-CCA security and shared-secret binding for the KE
 
 Cryptographic deniability is not required for either artefact version because this project prioritises explicit post-quantum authentication. The initiator signs the handshake transcript with ML-DSA-87, allowing the responder to verify who started the session.
 
-The claims assume that HKDF is secure on the specified inputs, that key encodings are pairwise disjoint, that all public inputs are validated, that randomness is cryptographically secure, and that expired material can be reliably erased. They also assume that each endpoint already has an authenticated copy of its peer's identity key and that the first-message encryption supplies quantum-resistant confidentiality and ciphertext integrity. The artefact instead inherits AES-256-CBC encrypt-then-MAC with an eight-byte HMAC-SHA-256 tag, so whether its 64-bit integrity bound meets the abstract post-quantum assumption remains unresolved. Appendix~\ref{app:extended-requirements} states the assumptions in full.
+The claims assume HKDF security on the specified inputs, pairwise-disjoint key encodings, validated public inputs, secure randomness, reliable erasure of expired material, an authenticated copy of each peer's identity key, and quantum-resistant confidentiality and integrity for the first message. The artefact instead inherits AES-256-CBC encrypt-then-MAC with an eight-byte HMAC-SHA-256 tag, so whether its 64-bit integrity bound meets that assumption is unresolved. Appendix~\ref{app:extended-requirements} states the assumptions in full.
 
 %Chapter 3.1.3
 \subsubsection{Non-Functional Requirements}
@@ -119,7 +119,7 @@ IND-CCA secrecy does not establish which public-key and ciphertext context a sha
 
 ML-KEM-1024 passes the primitive-level binding gate on the published PQXDH-specific result \cite{fiedler_security_2024}; Appendix~\ref{app:binding-detail} records the supporting mechanism.
 
-HQC needs a revision-specific verdict. Published work finds the earlier round-four construction deficient under several binding notions \cite{noauthor_binding_nodate}. Version 2 instead implements v5.0.0, whose successful shared-secret derivation incorporates a hash of the complete encapsulation key and a ciphertext-carried salt, then re-encrypts during decapsulation and uses implicit rejection on mismatch. Direct source inspection confirms that the pinned implementation follows this revised structure. Those changes provide relevant supporting evidence, but the published analysis does not prove that v5.0.0 satisfies the exact PQXDH-required notion. Version 2 therefore remains an experimental comparator. Appendix~\ref{app:binding-detail} gives the mechanism.
+HQC needs a revision-specific verdict. Published work finds the earlier round-four construction deficient under several binding notions \cite{noauthor_binding_nodate}. Version 2 implements v5.0.0, whose shared-secret derivation hashes the complete encapsulation key with a ciphertext-carried salt, re-encrypts during decapsulation, and rejects implicitly on mismatch; source inspection confirms the pinned implementation follows this structure. These changes are supporting evidence, but the published analysis does not prove v5.0.0 meets the exact PQXDH-required notion, so Version 2 remains an experimental comparator. Appendix~\ref{app:binding-detail} gives the mechanism.
 
 The protocol layer supplies only partial assurance. The transcript signature covers the KEM ciphertexts, identities, ratchet key, and base key, but omits KEM public keys and pre-key identifiers; the HKDF input contains neither keys nor ciphertexts. Thus the explicit wrapper described above remains unimplemented. ML-KEM retains its primitive-level result, while HQC remains an experimental comparator without the required proof.
 
@@ -172,26 +172,7 @@ The Double Ratchet then combines the KEM-derived root with an X25519 agreement b
 \subsection{Specification-Derived Size Comparison}
 \label{subsec:theoretical-comparison}
 
-The specifications allow communication and storage costs to be estimated before benchmarking. These are lower bounds for cryptographic components, not complete protocol objects or service encodings; Chapter~\ref{sec:results} reports the measured objects and analytical storage counterparts. Appendix~\ref{app:size-accounting} defines the component accounting and storage model.
-
-\begin{table}[htbp]
-    \centering
-    \caption{
-        Specification-derived cryptographic-component sums in bytes. Base mode denotes last-resort-only mode for the source-code versions and a baseline fetch without a one-time curve pre-key; the optional-key rows therefore compare different key roles.
-    }
-    \label{tab:spec-sizes}
-    \begin{tabular}{lrrr}
-        \hline
-            Cryptographic component & Baseline & Version 1 & Version 2 \\
-        \hline
-
-            Bundle component sum, base mode & 1763 & 13449 & 19118 \\
-        Bundle component sum, optional key present & 1796 & 19645 & 30983 \\
-        Initial-message component sum, base mode & 1635 & 8822 & 21675 \\
-        Initial-message component sum, optional key present & 1635 & 10391 & 36097 \\
-        \hline
-    \end{tabular}
-\end{table}
+The specification-derived accounting, including Table~\ref{tab:spec-sizes}, is recorded in Appendix~\ref{app:size-accounting}; the headline results follow.
 
 The table supports three conclusions. First, baseline-to-Version-1 is an aggregate conversion rather than an ML-KEM overhead: ML-DSA contributes the largest share through a 2593-byte identity key and two 4627-byte signatures in the base bundle. Second, replacing ML-KEM with HQC adds 5669 bytes per public key and 12853 per ciphertext, taking the optional-key initial-message component sum to 36097 bytes. Third, server-held public payload is \(13449+6196N\) bytes for Version 1 and \(19118+11865N\) for Version 2, versus \(1763+33C+1633K\) for the baseline. These are component models; complete objects also include identifiers, framing, and encrypted content.
 
