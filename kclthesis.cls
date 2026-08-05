@@ -76,7 +76,7 @@
 		United Kingdom}
 	\end{flushleft}
 \end{minipage}%
-\begin{minipage}{0.25\textwidth}
+\begin{minipage}{0.2\textwidth}
 	\begin{flushright}
 		\includegraphics[width=3.25cm]{assets/images/kcl}
 	\end{flushright}
