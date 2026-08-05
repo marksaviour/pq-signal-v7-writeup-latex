@@ -1,60 +1,20 @@
 \section{Handshake Specification of the Source-Code Versions}
 \label{app:handshake-spec}
 
-This appendix records the field-level specification of the handshake
-implemented by the two source-code versions, summarised in
-Section~\ref{subsubsec:variant-spec}. It is reference material: the
-design rationale, security requirements, and implementation status are
-stated in Sections~\ref{subsec:objectives}
-to~\ref{subsec:variant-design}.
+This appendix records the field-level specification of the handshake implemented by the two source-code versions, summarised in Section~\ref{subsubsec:variant-spec}. It is reference material: the design rationale, security requirements, and implementation status are stated in Sections~\ref{subsec:objectives} to~\ref{subsec:variant-design}.
 
-The responder holds four kinds of key material: a long-term ML-DSA-87
-identity pair; a medium-term X25519 ratchet pair; a signed last-resort
-KEM pair; and a replenished collection of signed one-time KEM pairs.
-The ratchet key does not enter the KEM-only bootstrap secret, but it
-seeds the Double Ratchet and contributes to the post-bootstrap message
-chain. The initiator holds its own long-term ML-DSA-87 identity pair
-and creates a fresh X25519 base key for each run, which identifies the
-session and is included in the signed transcript. Every public key
-begins with a one-byte algorithm identifier: \texttt{0x09} for the
-ML-DSA-87 identity keys, and, for the KEM keys, \texttt{0x0A}
-(ML-KEM-1024) in Version 1 and \texttt{0x0B} (HQC-256) in Version 2.
+The responder holds four kinds of key material: a long-term ML-DSA-87 identity pair; a medium-term X25519 ratchet pair; a signed last-resort KEM pair; and a replenished collection of signed one-time KEM pairs. The ratchet key does not enter the KEM-only bootstrap secret, but it seeds the Double Ratchet and contributes to the post-bootstrap message chain. The initiator holds its own long-term ML-DSA-87 identity pair and creates a fresh X25519 base key for each run, which identifies the session and is included in the signed transcript. Every public key begins with a one-byte algorithm identifier: \texttt{0x09} for the ML-DSA-87 identity keys, and, for the KEM keys, \texttt{0x0A} (ML-KEM-1024) in Version 1 and \texttt{0x0B} (HQC-256) in Version 2.
 
-The responder's published bundle contains its identity verification
-key, the ratchet public key and signature, the last-resort KEM public
-key and signature, an optional one-time KEM public key and signature,
-and the numeric identifiers of those signed keys; each signature
-covers the encoded key but not its numeric identifier or assigned
-bundle role. The initial message extends libsignal's
-\texttt{PreKeySignalMessage} with three fields: a one-time KEM pre-key
-identifier, a one-time KEM ciphertext, and the initiator's transcript
-signature. Existing fields carry the initiator's identity and base
-keys, the last-resort ciphertext and key identifiers, and the
-encrypted first message.
+The responder's published bundle contains its identity verification key, the ratchet public key and signature, the last-resort KEM public key and signature, an optional one-time KEM public key and signature, and the numeric identifiers of those signed keys; each signature covers the encoded key but not its numeric identifier or assigned bundle role. The initial message extends libsignal's \texttt{PreKeySignalMessage} with three fields: a one-time KEM pre-key identifier, a one-time KEM ciphertext, and the initiator's transcript signature. Existing fields carry the initiator's identity and base keys, the last-resort ciphertext and key identifiers, and the encrypted first message.
 
-Encapsulation to the last-resort key yields \(ss_1\) and, when a
-one-time key is used, encapsulation to it yields \(ss_2\). The
-initiator forms the secret input
-\(\mathtt{0xFF}^{32} \parallel ss_1 \parallel ss_2\), omitting
-\(ss_2\) in last-resort-only mode; the leading constant preserves
-libsignal's discriminator convention. HKDF-SHA-256 derives 64 bytes of
-bootstrap root and chain material with no salt; the \texttt{info}
-value is \texttt{PQXDH\_MLKEM1024\_MLDSA87\_SHA-256} in Version 1 and
-\texttt{PQXDH\_HQC256\_MLDSA87\_SHA-256} in Version 2. The signed
-transcript is
+Encapsulation to the last-resort key yields \(ss_1\) and, when a one-time key is used, encapsulation to it yields \(ss_2\). The initiator forms the secret input \(\mathtt{0xFF}^{32} \parallel ss_1 \parallel ss_2\), omitting \(ss_2\) in last-resort-only mode; the leading constant preserves libsignal's discriminator convention. HKDF-SHA-256 derives 64 bytes of bootstrap root and chain material with no salt; the \texttt{info} value is \texttt{PQXDH\_MLKEM1024\_MLDSA87\_SHA-256} in Version 1 and \texttt{PQXDH\_HQC256\_MLDSA87\_SHA-256} in Version 2. The signed transcript is
 \[
 t = \mathrm{lp}(L_v) \parallel \mathrm{lp}(IK_A) \parallel
 \mathrm{lp}(ct_1) \parallel \mathrm{lp}(ct_2) \parallel
 \mathrm{lp}(IK_B) \parallel \mathrm{lp}(RK_B) \parallel
 \mathrm{lp}(BK_A),
 \]
-where \(\mathrm{lp}(\cdot)\) prefixes each value with its four-byte
-big-endian length; \(L_v\) is
-\texttt{PQXDH\_MLKEM1024\_MLDSA87\_transcript} or
-\texttt{PQXDH\_HQC256\_MLDSA87\_transcript}; \(ct_2\) is the empty
-string in last-resort-only mode; \(RK_B\) is the responder's ratchet
-public key; and \(BK_A\) is the initiator's base key. Every ML-DSA-87
-operation uses the context string \texttt{Signal\_PQXDH\_MLDSA87}.
+where \(\mathrm{lp}(\cdot)\) prefixes each value with its four-byte big-endian length; \(L_v\) is \texttt{PQXDH\_MLKEM1024\_MLDSA87\_transcript} or \texttt{PQXDH\_HQC256\_MLDSA87\_transcript}; \(ct_2\) is the empty string in last-resort-only mode; \(RK_B\) is the responder's ratchet public key; and \(BK_A\) is the initiator's base key. Every ML-DSA-87 operation uses the context string \texttt{Signal\_PQXDH\_MLDSA87}.
 
 \section{Extended Requirements and Acceptance Criteria}
 \label{app:extended-requirements}
@@ -62,6 +22,7 @@ operation uses the context string \texttt{Signal\_PQXDH\_MLDSA87}.
 This appendix expands the concise requirements of Section~\ref{subsec:objectives}. It provides supporting specification details and audit material. The principal claim boundaries and outcomes remain in Chapter~\ref{sec:design}.
 
 \subsection{Functional and Test Acceptance Criteria}
+\label{app:functional-test-criteria}
 
 Each source-code version must execute the complete PQXDH-derived handshake, from bundle generation through signature verification, encapsulation, decapsulation, transcript authentication, and secret derivation. The design must state how identity verification keys are bound to users and must authenticate the algorithm-suite, key-role, and key identifiers needed to interpret the transcript. Each public key and transcript field must have one clearly defined byte representation. The encoding must also identify the type and purpose of each value so that the same bytes cannot be interpreted in different ways. The initial encrypted message must be authenticated before it is accepted. Transient shared secrets and consumed one-time private pre-keys must be erased as soon as they are no longer required.
 
@@ -70,6 +31,7 @@ Automated tests must verify successful operation in both implemented pre-key mod
 The artefact's handling of post-quantum pre-keys differs from deployed PQXDH, which selects one signed KEM pre-key per run: a one-time post-quantum pre-key when one remains, or otherwise the signed last-resort pre-key. Each artefact version instead always encapsulates to the signed last-resort KEM pre-key and, when available, additionally to a one-time KEM pre-key, so the two implemented modes are last-resort-only and last-resort-plus-one-time rather than deployed PQXDH's either/or selection. The optional curve one-time pre-key of deployed PQXDH has no counterpart in these no-X25519 handshake KDFs.
 
 \subsection{Security and Operational Acceptance Criteria}
+\label{app:security-operational-criteria}
 
 Forward-secrecy claims depend on the pre-key mode, on authenticated pre-key role metadata, and on timely key erasure. In last-resort-only mode, later compromise of the retained last-resort decapsulation key can expose a recorded handshake that used it. In last-resort-plus-one-time mode, the one-time private key and its transient shared secret must be deleted after successful use. Under the KEM and KDF assumptions, later compromise of the retained last-resort key alone must then not suffice to recover the initial handshake secret. The stronger guarantee also requires both parties to authenticate that the additional key is genuinely one-time, a condition whose implementation status Section~\ref{subsubsec:design-deniability} records. Compromise of a long-term identity signing key after completion must not by itself reveal a previously derived handshake secret, although it may enable later impersonation.
 
@@ -80,6 +42,7 @@ Three operational requirements follow. All key generation and encapsulation rand
 These requirements rest on stated assumptions about the surrounding primitives, consistent with the PQXDH specification and its formal analyses \cite{kret_pqxdh_nodate, bhargavan_formal_2024}: an authenticated-encryption construction for the initial message providing IND-CPA confidentiality and INT-CTXT ciphertext integrity against a quantum-capable adversary; HKDF modelled as a secure key derivation function on the specified inputs; pairwise-disjoint encodings for all key types; validation of every public input prior to use; a cryptographically secure random source at both endpoints; and reliable deletion, via zeroisation, of expired secret material. The artefact adopts libsignal's AES-256-CBC encrypt-then-MAC construction, HMAC-SHA-256 truncated to an eight-byte tag and verified before decryption, rather than a standalone category-5 AEAD. Whether this inherited construction, with its 64-bit tag bound, meets the abstract post-quantum integrity assumption requires separate justification and is not a demonstrated property. Section~\ref{subsubsec:variant-spec} records which of these the artefact demonstrates and which remain obligations for the surrounding application.
 
 \subsection{Role-Level Signing Requirements}
+\label{app:role-signing-requirements}
 
 What must be signed is specified by role. The responder's offline signatures must bind each published pre-key to the responder's identity and to the role, algorithm suite, and key identifiers necessary for interpretation; the initiator's initial-message signature must bind both identities, the selected pre-key identifiers and public keys, the KEM ciphertext or ciphertexts, and the complete canonical transcript. The division arises from asynchronous operation: the responder is offline when the initiator encapsulates, so it cannot sign a subsequent ciphertext, and ciphertext binding falls to the initiator.
 
