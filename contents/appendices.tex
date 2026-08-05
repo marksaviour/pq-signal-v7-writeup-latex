@@ -14,7 +14,7 @@ t = \mathrm{lp}(L_v) \parallel \mathrm{lp}(IK_A) \parallel
 \mathrm{lp}(IK_B) \parallel \mathrm{lp}(RK_B) \parallel
 \mathrm{lp}(BK_A),
 \]
-where \(\mathrm{lp}(\cdot)\) prefixes each value with its four-byte big-endian length; \(L_v\) is \texttt{PQXDH\_MLKEM1024\_MLDSA87\_transcript} or \texttt{PQXDH\_HQC256\_MLDSA87\_transcript}; \(ct_2\) is the empty string in last-resort-only mode; \(RK_B\) is the responder's ratchet public key; and \(BK_A\) is the initiator's base key. Every ML-DSA-87 operation uses the context string \texttt{Signal\_PQXDH\_MLDSA87}.
+where \(\mathrm{lp}(\cdot)\) prefixes each value with its four-byte big-endian length; \(L_v\) is \texttt{PQXDH\_MLKEM1024\_\allowbreak MLDSA87\_transcript} or \texttt{PQXDH\_HQC256\_\allowbreak MLDSA87\_transcript}; \(ct_2\) is the empty string in last-resort-only mode; \(RK_B\) is the responder's ratchet public key; and \(BK_A\) is the initiator's base key. Every ML-DSA-87 operation uses the context string \texttt{Signal\_PQXDH\_MLDSA87}.
 
 \section{Extended Requirements and Acceptance Criteria}
 \label{app:extended-requirements}
