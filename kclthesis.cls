@@ -61,7 +61,7 @@
 
 \renewcommand*{\maketitle}{
 \begin{titlepage}
-
+\setlength{\parindent}{0pt}
 \begin{minipage}{0.4\textwidth}
 \begin{flushleft}
 \textbf{Faculty of Natural and\\
