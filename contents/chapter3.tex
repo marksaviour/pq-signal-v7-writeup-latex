@@ -97,7 +97,7 @@ The framework is applied first to the KEM candidates, then to the signature cand
 
 ML-KEM-1024 passes the gates: FIPS 203 fixes its category-5 encapsulation key and ciphertext at 1568 bytes, and Version 1 uses an integrable Rust implementation developed with verification tooling \cite{national_institute_of_standards_and_technology_us_module-lattice-based_2024-1,noauthor_release_nodate-1}. Published analysis also establishes the binding property required by PQXDH.
 
-HQC-256 provides the code-based alternative. NIST selected HQC on 11 March 2025 because its quasi-cyclic decoding assumption offers a hedge against a future break in structured lattices \cite{alagic_status_2025}.
+HQC-256 provides the code-based alternative. NIST selected HQC on 11 March 2025 because its quasi-cyclic decoding assumption offers a hedge against a future break in structured lattices \cite{alagic_status_2025}~\cite{noauthor_nist_2025}.
 
 The absence of a standard makes the exact revision important: Version 2 vendors the unreleased RustCrypto \texttt{hqc-kem} package, version 0.1.0, at commit \texttt{8f1fd8c}, together with a one-line correction to deserialisation \cite{noauthor_kemshqc-kem_nodate}, implementing the 22 August 2025 HQC v5.0.0 specification and its salted Fujisaki--Okamoto transform \cite{aguilar-melchor_hqc_nodate}.
 
